@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             btnSend = new Button();
             exitBtn = new Button();
             tbxLog = new RichTextBox();
@@ -45,12 +46,13 @@
             label5 = new Label();
             mTextBoxPayment = new MaskedTextBox();
             btnPaymentStart = new Button();
+            btnSendRaw = new Button();
+            toolTip1 = new ToolTip(components);
             SuspendLayout();
             // 
             // btnSend
             // 
             btnSend.BackColor = SystemColors.ButtonShadow;
-            btnSend.Enabled = false;
             btnSend.Location = new Point(353, 5);
             btnSend.Name = "btnSend";
             btnSend.Size = new Size(75, 23);
@@ -119,7 +121,7 @@
             // 
             // BtnCreateCrc
             // 
-            BtnCreateCrc.Location = new Point(713, 672);
+            BtnCreateCrc.Location = new Point(921, 673);
             BtnCreateCrc.Name = "BtnCreateCrc";
             BtnCreateCrc.Size = new Size(75, 23);
             BtnCreateCrc.TabIndex = 11;
@@ -131,7 +133,7 @@
             // 
             txtBoxHexDatas.Location = new Point(77, 673);
             txtBoxHexDatas.Name = "txtBoxHexDatas";
-            txtBoxHexDatas.Size = new Size(630, 23);
+            txtBoxHexDatas.Size = new Size(838, 23);
             txtBoxHexDatas.TabIndex = 12;
             // 
             // label2
@@ -146,7 +148,7 @@
             // txtBoxCRC
             // 
             txtBoxCRC.BackColor = SystemColors.Info;
-            txtBoxCRC.Location = new Point(51, 702);
+            txtBoxCRC.Location = new Point(77, 702);
             txtBoxCRC.Name = "txtBoxCRC";
             txtBoxCRC.ReadOnly = true;
             txtBoxCRC.Size = new Size(40, 23);
@@ -204,7 +206,6 @@
             // btnPaymentStart
             // 
             btnPaymentStart.BackColor = SystemColors.ButtonShadow;
-            btnPaymentStart.Enabled = false;
             btnPaymentStart.Location = new Point(187, 48);
             btnPaymentStart.Name = "btnPaymentStart";
             btnPaymentStart.Size = new Size(97, 23);
@@ -213,11 +214,23 @@
             btnPaymentStart.UseVisualStyleBackColor = false;
             btnPaymentStart.Click += btnPaymentStart_Click;
             // 
+            // btnSendRaw
+            // 
+            btnSendRaw.BackColor = SystemColors.ButtonShadow;
+            btnSendRaw.Location = new Point(919, 701);
+            btnSendRaw.Name = "btnSendRaw";
+            btnSendRaw.Size = new Size(75, 23);
+            btnSendRaw.TabIndex = 22;
+            btnSendRaw.Text = "Send Raw";
+            btnSendRaw.UseVisualStyleBackColor = false;
+            btnSendRaw.Click += btnSendRaw_Click;
+            // 
             // FormClient
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1008, 729);
+            Controls.Add(btnSendRaw);
             Controls.Add(btnPaymentStart);
             Controls.Add(mTextBoxPayment);
             Controls.Add(label5);
@@ -263,5 +276,7 @@
         private Label label5;
         private MaskedTextBox mTextBoxPayment;
         private Button btnPaymentStart;
+        private Button btnSendRaw;
+        private ToolTip toolTip1;
     }
 }

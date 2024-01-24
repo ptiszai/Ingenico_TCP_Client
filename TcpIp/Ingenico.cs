@@ -29,6 +29,7 @@ namespace IngenicoTestTCP.TcpIp
         private string host_ip;
         private int host_port;
         private string mac;
+        private string tid;
         private bool dhcp;
         private Thread? dhcpThr;
         private PingThread pingThreadObject;
@@ -37,15 +38,16 @@ namespace IngenicoTestTCP.TcpIp
         private bool running = true;
         #endregion
         #region public functions
-        public Ingenico(string host_ip_a, int host_port_a, string mac_a, bool dhcp_a = false)
+        public Ingenico(string host_ip_a, int host_port_a, string mac_a, string tid_a, bool dhcp_a = false)
         {
             host_ip = host_ip_a;
             host_port = host_port_a;
             mac = mac_a;
+            tid = tid_a;
             dhcp = dhcp_a;
             Skeleton = this;
             ipdhcp = new GetIpOrMacAddressDhcp();
-            cmds = new Commands();
+            cmds = new Commands(tid);
             if (dhcp)
             {                              
                 dhcpThr = new Thread(dhcp_executor);

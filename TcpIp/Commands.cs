@@ -43,13 +43,16 @@ namespace IngenicoTestTCP.TcpIp
         public bool NextCmd { get; set; }
 
         // ACK
-        public Commands()
+        public Commands(string tid_a)
         {
+            Id = tid_a;
             AmountFt = "00000000";
             NextCmd = false;
 
+            // any
+            Command _cmd = new Command(Content.ANY, ANY(), "\nANY");// 51 page
             // ACK
-            Command _cmd = new Command(Content.ACK, ACK(), "\nACK");// 51 page
+            _cmd = new Command(Content.ACK, ACK(), "\nACK");// 51 page
             CommandList.Add(Content.ACK, _cmd);
             // NACK
             _cmd = new Command(Content.NACK, NACK(), "\nNACK"); // 51 page
@@ -122,6 +125,13 @@ namespace IngenicoTestTCP.TcpIp
             CommandList.Add(Content.FIRSTDLL, _cmd);
 
         }
+
+        public byte[] ANY()
+        {
+            byte[] _aa = Content.set_stringTobyte(Id, 8);
+            return _aa;
+        }
+
 
         public byte[] StartCommand(byte cmd_a)
         {

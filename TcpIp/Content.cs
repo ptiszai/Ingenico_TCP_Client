@@ -30,6 +30,7 @@ namespace IngenicoTestTCP.TcpIp
         public static byte STX = (byte)'\x02';
         public static byte ETX = (byte)'\x03';
         public static string FS = ((char)0x1c).ToString();
+        public static byte ANY = 0x01;
         public static byte LRC = 0x7f;
         public static byte ACK = 0x06;
         public static byte LRC_ACK = 0x7A;

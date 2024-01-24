@@ -15,15 +15,15 @@ namespace IngenicoTestTCP
         {
             // https://stackoverflow.com/questions/311165/how-do-you-convert-a-byte-array-to-a-hexadecimal-string-and-vice-versa
             int _length = (len_a <= 0) ? data_a.Length : len_a;
-            var encoding = Encoding.GetEncoding("US-ASCII");
+            //var encoding = Encoding.GetEncoding("US-ASCII");
             string sTemp0 = BitConverter.ToString(data_a, 0, _length).Replace("-", " ");
             // var encoding = Encoding.GetEncoding("US-ASCII");
             return sTemp0;
         }
-       /* public static string ByteArray_to_ASCII_String(byte[] data_a, int startPos_a, int len_a = 0)
-        {
-            return ASCIIEncoding.GetString(data_a, startPos_a, len_a);
-        }*/
+        /* public static string ByteArray_to_ASCII_String(byte[] data_a, int startPos_a, int len_a = 0)
+         {
+             return ASCIIEncoding.GetString(data_a, startPos_a, len_a);
+         }*/
         public static byte[] StringToByteArray(string hex)
         {
             int NumberChars = hex.Length;
@@ -44,7 +44,6 @@ namespace IngenicoTestTCP
             string _message = "";
             if (ascii_a)
             {
-
                 _message = Utils.ByteArrayToString(bytes_a, byteIndex_a, byteCount_a);
             }
             else
@@ -68,13 +67,75 @@ namespace IngenicoTestTCP
             foreach (var sub in subs)
             {
                 hexValues.Add(sub);
-               // Console.WriteLine($"Substring: {sub}");
+                // Console.WriteLine($"Substring: {sub}");
             }
 
             byte[] result = hexValues
               .Select(value => Convert.ToByte(value, 16))
               .ToArray();
             return result;
+        }
+
+        public static string HexToASCIIString(string hexValues)
+        {
+            //string hexValues = "48 65 6C 6C 6F 20 57 6F 72 6C 64 21";
+            // hexValues = "02 30 30 30 30 30 30 30 30 30 69 30 35 36 30 38 38 39 31 2E 32 30 38 2E 32 31 34 2E 31 30 30 30";
+            string[] hexValuesSplit = hexValues.Split(' ');
+            List<string> _tempList = new List<string>();
+            // int ii = 0;
+            string temphex = " ";
+            foreach (string hex in hexValuesSplit)
+            {
+                if (string.IsNullOrEmpty(hex))
+                {
+                    continue;
+                }
+                temphex = hex;
+                if (hex == "00")
+                {
+                    temphex = "30";
+                }
+                else
+                {
+                    temphex = hex;
+                }
+        // Convert the number expressed in base-16 to an integer.
+                int value = Convert.ToInt32(temphex, 16);
+                // Get the character corresponding to the integral value.
+                string stringValue = Char.ConvertFromUtf32(value);
+               // char charValue = (char)value;
+                _tempList.Add(stringValue);
+        /*        if (ii == 2)
+                {
+                    ii = 2;
+                }
+                ii++;*/
+              //  Console.WriteLine("hexadecimal value = {0}, int value = {1}, char value = {2} or {3}",
+              //                  hex, value, stringValue, charValue);
+
+            }
+            string _result = string.Join("", _tempList.ToArray());
+            //Console.Write(_result);
+            return _result;
+        }
+
+       /* public static string StringToHex(string stringValues)
+        {
+            string _result = "";
+            return _result;
+        }*/
+        public static string ASCIIStringToHexString(string Value)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            byte[] inputByte = Encoding.UTF8.GetBytes(Value);
+
+            foreach (byte b in inputByte)
+            {
+                sb.Append(string.Format("{0:x2} ", b));
+            }
+
+            return sb.ToString();
         }
         /* public static Tuple<byte[], int> SendCommand(byte[] rdata_a, int rlen_a)
          {
@@ -102,6 +163,7 @@ namespace IngenicoTestTCP
             for (i = 0; i < length_a; i++)            
             {
                 temp = cmd_a[offset_a + i];
+              //  Console.WriteLine($"i, temp:{i}, {temp}");
                 LRC ^= temp;                
             }
             return LRC;

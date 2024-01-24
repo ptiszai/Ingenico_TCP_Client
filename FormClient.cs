@@ -16,6 +16,8 @@ using IniParser;
 using System.Reflection;
 using System.Collections.Generic;
 using System.Threading;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.ToolBar;
 
 //// Debug.WriteLine(BitConverter.ToString(System.Text.Encoding.Default.GetBytes(message)));  // Write HEX to the debug
 namespace IngenicoTestTCP
@@ -36,6 +38,7 @@ namespace IngenicoTestTCP
         private string pos_ip = "127.0.0.1";
         private string pos_mac = "";
         private int pos_port = 0;
+        private string pos_tid = "";
         public FormClient()
         {
             InitializeComponent();
@@ -52,20 +55,22 @@ namespace IngenicoTestTCP
             pos_port = Int32.Parse(_value1);
             _value1 = dataIni["General"]["pos_mac"];
             pos_mac = _value1;
+            _value1 = dataIni["General"]["pos_tid"];
+            pos_tid = _value1;
 
-          /*  if (pos_dhcp)
-            {
-                GetIpOrMacAddressDhcp _ipdhcp = new GetIpOrMacAddressDhcp();
-                string ip_address = _ipdhcp.getIpByMac(pos_mac);
-                if (ip_address != "") 
-                {
-                    btnSend.Enabled = true;
-                    btnPaymentStart.Enabled = true;
-                }
-            }*/
-            cmds = new Commands();
+            /*  if (pos_dhcp)
+              {
+                  GetIpOrMacAddressDhcp _ipdhcp = new GetIpOrMacAddressDhcp();
+                  string ip_address = _ipdhcp.getIpByMac(pos_mac);
+                  if (ip_address != "") 
+                  {
+                      btnSend.Enabled = true;
+                      btnPaymentStart.Enabled = true;
+                  }
+              }*/
+            cmds = new Commands(pos_tid);
             //ingenico = new Ingenico(host_ip, host_port);
-            ingenico = new Ingenico(pos_ip, pos_port, pos_mac, pos_dhcp);
+            ingenico = new Ingenico(pos_ip, pos_port, pos_mac, pos_tid, pos_dhcp);
             {
                 ingenico.MesageToMainPage += (state, message) =>
                 {
@@ -107,7 +112,7 @@ namespace IngenicoTestTCP
                                     break;
                                 }
                             case StatusEnum.CLIENT_PAYMENT_RESULT:
-                                {    
+                                {
                                     writeTotbxLog($"INFO: {message}", Color.Cyan);
                                     break;
                                 }
@@ -129,28 +134,28 @@ namespace IngenicoTestTCP
 
         private void goodOrError(bool state_a)
         {
-              if (state_a)
-              {
-                  btnSend.Enabled = true;
-                  btnSend.BackColor = SystemColors.Control;
-                  btnPaymentStart.Enabled = true;
-                  btnPaymentStart.BackColor = SystemColors.Control;
-                  btnConfig.Enabled = true;
-                  btnConfig.BackColor = SystemColors.Control;
-                  //writeTotbxLog(message, Color.Green);
-                  Text = $"Ingenico TCP Client, version {ver}: {ingenico!.GethostIp()}:{pos_port.ToString()}";
-              }
-              else
-              {
-                  btnSend.Enabled = false;
-                  btnSend.BackColor = SystemColors.ButtonShadow;
-                  btnPaymentStart.Enabled = false;
-                  btnPaymentStart.BackColor = SystemColors.ButtonShadow;
-                  btnConfig.Enabled = false;
-                  btnConfig.BackColor = SystemColors.ButtonShadow;
-                 // writeTotbxLog(message, Color.Red);
-                  Text = $"Ingenico TCP Client, version {ver}: -------:{pos_port.ToString()}";
-              } 
+            if (state_a)
+            {
+                btnSend.Enabled = true;
+                btnSend.BackColor = SystemColors.Control;
+                btnPaymentStart.Enabled = true;
+                btnPaymentStart.BackColor = SystemColors.Control;
+                btnConfig.Enabled = true;
+                btnConfig.BackColor = SystemColors.Control;
+                //writeTotbxLog(message, Color.Green);
+                Text = $"Ingenico TCP Client, version {ver}: {ingenico!.GethostIp()}:{pos_port.ToString()}";
+            }
+            else
+            {
+                btnSend.Enabled = false;
+                btnSend.BackColor = SystemColors.ButtonShadow;
+                btnPaymentStart.Enabled = false;
+                btnPaymentStart.BackColor = SystemColors.ButtonShadow;
+                btnConfig.Enabled = false;
+                btnConfig.BackColor = SystemColors.ButtonShadow;
+                // writeTotbxLog(message, Color.Red);
+                Text = $"Ingenico TCP Client, version {ver}: -------:{pos_port.ToString()}";
+            }
         }
 
 
@@ -170,34 +175,36 @@ namespace IngenicoTestTCP
 
         private void Form1_Load(object sender, EventArgs e)
         {
-           // Version? _ver = Assembly.GetExecutingAssembly().GetName().Version;
+            // Version? _ver = Assembly.GetExecutingAssembly().GetName().Version;
             Text = $"Adomány Táble Client, version {ver}: {pos_ip}:{pos_port.ToString()}";
             foreach (KeyValuePair<byte, Command> cmdd in cmds.CommandList)
-            {                
+            {
                 cmdComboBox.Items.Add(cmdd.Value.Description);
             }
             cmdComboBox.SelectedIndex = 0;
-          /*  ingenico!.VariableCompAction2 += (componentClass) =>
-            {
-                if (componentClass != null)
-                {
-                    switch (componentClass!.CompValue)
-                    {
-                        case ComponentEnum.btnPaymentStart:
-                            {
-                                this.Invoke(new MethodInvoker(() =>
-                                {
-                                    btnPaymentStart.Enabled = true;
-                                }));                               
-                                break;
-                            }
-                        case ComponentEnum.none:
-                            {                                
-                                break;
-                            }
-                    }
-                }
-            };*/
+            toolTip1.SetToolTip(txtBoxHexDatas, "Elsö két karakter hexánál 02");
+            toolTip1.SetToolTip(BtnCreateCrc, "Hexánál müködik\n02 - ... - 7F");
+            /*  ingenico!.VariableCompAction2 += (componentClass) =>
+              {
+                  if (componentClass != null)
+                  {
+                      switch (componentClass!.CompValue)
+                      {
+                          case ComponentEnum.btnPaymentStart:
+                              {
+                                  this.Invoke(new MethodInvoker(() =>
+                                  {
+                                      btnPaymentStart.Enabled = true;
+                                  }));                               
+                                  break;
+                              }
+                          case ComponentEnum.none:
+                              {                                
+                                  break;
+                              }
+                      }
+                  }
+              };*/
 
             try
             {
@@ -248,6 +255,30 @@ namespace IngenicoTestTCP
         private void ascii_CheckBox_CheckedChanged(object sender, EventArgs e)
         {
             ingenico!.ASCII = ascii_CheckBox.Checked;
+            if (string.IsNullOrEmpty(txtBoxHexDatas.Text))
+            {               
+                return;
+            }
+            bool hex = false;
+            //int hex = txtBoxHexDatas.Text.IndexOf("30");
+            if ((txtBoxHexDatas.Text[0] == '0') && (txtBoxHexDatas.Text[1] == '2'))
+            {
+                hex = true;
+            }
+            if (hex)
+            { // hex
+                if (ascii_CheckBox.Checked)
+                {
+                    txtBoxHexDatas.Text=Utils.HexToASCIIString(txtBoxHexDatas.Text);                  
+                }
+            }
+            else
+            { // ascii
+                if (!ascii_CheckBox.Checked)
+                {
+                    txtBoxHexDatas.Text = Utils.ASCIIStringToHexString(txtBoxHexDatas.Text);
+                }
+            }
         }
 
         private void BtnCreateCrc_Click(object sender, EventArgs e)
@@ -266,7 +297,29 @@ namespace IngenicoTestTCP
         private void btnPaymentStart_Click(object sender, EventArgs e)
         {
             btnPaymentStart.Enabled = false;
-            Ingenico.Skeleton!.SetPaymentAmountFt(mTextBoxPayment.Text);           
+            Ingenico.Skeleton!.SetPaymentAmountFt(mTextBoxPayment.Text);
+        }
+
+        private async void btnSendRaw_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(txtBoxCRC.Text))
+            {
+                var result = MessageBox.Show("Empty", "Warning",
+                                MessageBoxButtons.OKCancel);               
+                return; 
+            }
+            
+            try
+            {
+                byte[] aa = Utils.StringHexToByteArray(txtBoxHexDatas.Text + " " + txtBoxCRC.Text);
+                Command _cmd = new Command(0, aa, "\nAny Raw Cmd:");
+                await ingenico!.SendAndWaitForResponse(_cmd);
+            }
+            catch (Exception ex) 
+            {
+                writeTotbxLog($"ERROR: {ex.Message}", Color.Red);
+            }
+            return;
         }
     }
 }

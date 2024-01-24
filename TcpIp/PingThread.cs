@@ -198,6 +198,7 @@ namespace IngenicoTestTCP.TcpIp
                 {
                     repeatedNumber = 0;
                     state = StatusEnum.PING_GENERAL_ERROR;
+                  //  state = StatusEnum.PING_SUCCESS;
                 }
                 else
                 {
@@ -219,6 +220,7 @@ namespace IngenicoTestTCP.TcpIp
                 if (repeatedNumber >= 5)
                 {
                     repeatedNumber = 0;
+                   // state = StatusEnum.PING_SUCCESS;
                     state = StatusEnum.PING_TIMEOUT_ERROR;
                 }
                 else
@@ -232,6 +234,7 @@ namespace IngenicoTestTCP.TcpIp
             {
                 repeatedNumber = 0;
                 state = StatusEnum.GENERAL_ERROR;
+               // state = StatusEnum.PING_SUCCESS;
             }
             else
             {

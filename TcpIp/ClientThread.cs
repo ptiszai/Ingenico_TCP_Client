@@ -146,7 +146,7 @@ namespace IngenicoTestTCP.TcpIp
                                Ingenico.Skeleton!.TcpException_func($"-->   IN: count:{bytesRead} data: {_mess}", Color.DarkGreen);
                            }*/
                         TimeSpan timeout = default;
-                        timeout = TimeSpan.FromSeconds(60);
+                        timeout = TimeSpan.FromSeconds(40);
                         var cts = new CancellationTokenSource(timeout); //C# 8 syntax
                         var buffer = new byte[511];
                         int receivedCount;
@@ -180,11 +180,13 @@ namespace IngenicoTestTCP.TcpIp
                                         bytesRead += receivedCount;
                                     }
                                 }
+                           //     return;
                             }
                             catch (TimeoutException exp)
                             {
                                 receivedCount = -1;
                                 MesageToIngenico!(StatusEnum.CLIENT_SEND_AND_WAIT1, $"ERROR: SendAndWaitForResponse 1: {exp.Message}");
+                                return;
                             }
                         }
                      /*   if (!mclient.Connected)
@@ -235,8 +237,8 @@ namespace IngenicoTestTCP.TcpIp
                             {
                                 if ((byteBuffer[0] == Content.ACK) && (byteBuffer[1] == Content.ETX) && (byteBuffer[2] == Content.LRC_ACK))
                                 {
-                                  //  byte _crc = Utils.GetLRC(byteBuffer, bytesRead - 4, 3);
                                     byte _crc = Utils.GetLRC(byteBuffer, bytesRead - 1, 0);
+                              //      byte _crc = Utils.GetLRC(byteBuffer, bytesRead - 3, 4);
                                     byte _rcrc = byteBuffer[bytesRead - 1];
                                     if (_rcrc == _crc)
                                     {
@@ -248,8 +250,8 @@ namespace IngenicoTestTCP.TcpIp
                                         _sdescription = "NACK";
                                         _sdata = _cmds.NACK();
                                     }
-                                    
-                                    //Ingenico.Skeleton!.TcpException_func($"Datas: {_mess}", Color.Red);
+                                    string _st = Utils.ByteArrayToString(byteBuffer!, 0, bytesRead);
+                                    Ingenico.Skeleton!.TcpException_func($"Datas: {_st}", Color.Red);
                                     //MesageToIngenico!(StatusEnum.CLIENT_PAYMENT_RESULT, $"Payment: card:{_messag1},amount:{_messag2},date and time:{_messag3}\ncard name:{_messag4},message:{_messag5}\n");
                                     if (byteBuffer[13] == Content.CARD_STATUS)
                                     {
