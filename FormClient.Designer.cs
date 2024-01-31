@@ -166,13 +166,13 @@
             // btnConfig
             // 
             btnConfig.BackColor = SystemColors.ButtonShadow;
-            btnConfig.Enabled = false;
             btnConfig.Location = new Point(465, 6);
             btnConfig.Name = "btnConfig";
             btnConfig.Size = new Size(75, 23);
             btnConfig.TabIndex = 16;
             btnConfig.Text = "Configs";
             btnConfig.UseVisualStyleBackColor = false;
+            btnConfig.Click += btnConfig_Click;
             // 
             // label4
             // 
@@ -200,7 +200,7 @@
             mTextBoxPayment.Name = "mTextBoxPayment";
             mTextBoxPayment.Size = new Size(78, 25);
             mTextBoxPayment.TabIndex = 20;
-            mTextBoxPayment.Text = "10000";
+            mTextBoxPayment.Text = "100";
             mTextBoxPayment.ValidatingType = typeof(int);
             // 
             // btnPaymentStart

@@ -24,15 +24,10 @@ namespace IngenicoTestTCP
 {
     public partial class FormClient : Form
     {
-        private Ingenico? ingenico;
-        //static public Action<string>? TcpError;
+        private Ingenico? ingenico;       
         Version? ver;
         private bool connected = false;
         private Commands cmds;
-        //private string host_ip = "127.0.0.1";
-        //private string host_ip = "192.168.0.17";
-        //private int host_port = 1234;
-        // private int host_port = 1111;
         private string ini_file = @"c:\Users\Public\IngenicoTestTCP\ingenicoTestTCP.ini";
         private bool pos_dhcp = false;
         private string pos_ip = "127.0.0.1";
@@ -69,7 +64,7 @@ namespace IngenicoTestTCP
                   }
               }*/
             cmds = new Commands(pos_tid);
-            //ingenico = new Ingenico(host_ip, host_port);
+            
             ingenico = new Ingenico(pos_ip, pos_port, pos_mac, pos_tid, pos_dhcp);
             {
                 ingenico.MesageToMainPage += (state, message) =>
@@ -93,6 +88,7 @@ namespace IngenicoTestTCP
                                     break;
                                 }
                             case StatusEnum.PAYMENTIN:
+                            case StatusEnum.CLIENT_PROSSEING:
                             case StatusEnum.DHCP_EXECUTOR:
                                 {
                                     writeTotbxLog($"ERROR:Ingenico: {message}", Color.Red);
@@ -113,7 +109,19 @@ namespace IngenicoTestTCP
                                 }
                             case StatusEnum.CLIENT_PAYMENT_RESULT:
                                 {
-                                    writeTotbxLog($"INFO: {message}", Color.Cyan);
+                                    writeTotbxLog($"{message}", Color.Brown);
+                                    break;
+                                }
+                            case StatusEnum.CLIENT_PAYMENT_GOOD_END:
+                                {
+                                    writeTotbxLog($"{message}", Color.Brown);
+                                    goodOrError(true);
+                                    break;
+                                }
+                            case StatusEnum.CLIENT_PAYMENT_ERROR_END:
+                                {
+                                    writeTotbxLog($"ERROR:{message}", Color.Red);
+                                    goodOrError(true);
                                     break;
                                 }
                             case StatusEnum.CLIENT_IMFO_1:
@@ -123,9 +131,28 @@ namespace IngenicoTestTCP
                             case StatusEnum.CLIENT_IMFO_5:
                             case StatusEnum.CLIENT_IMFO_6:
                                 {
-                                    writeTotbxLog($"INFO:Client: {message}", Color.Blue);
+                                    writeTotbxLog($"{message}", Color.Blue);
                                     break;
                                 }
+                            case StatusEnum.CLIENT_GOOD_RECEIVE:
+                                {
+                                    writeTotbxLog($"{message}", Color.Black);
+                                    break;
+                                }
+                            case StatusEnum.CLIENT_UNKNOW:
+                                {
+                                    writeTotbxLog($"CLIENT_UNKNOW:  {message}", Color.Black);
+                                    break;
+                                }
+                            case StatusEnum.PAYMENT_ERROR_TYPECODE67:
+                            case StatusEnum.PAYMENT_ERROR_TYPECODE72:
+                            case StatusEnum.PAYMENT_ERROR_TYPECODE74:
+                            case StatusEnum.PAYMENT_ERROR_TYPECODE50:
+                                {
+                                    writeTotbxLog($"ERROR:  {message}", Color.Red);
+                                    break;
+                                }
+
                         }
                     }));
                 };
@@ -134,8 +161,8 @@ namespace IngenicoTestTCP
 
         private void goodOrError(bool state_a)
         {
-            if (state_a)
-            {
+           // if (state_a)
+          //  {
                 btnSend.Enabled = true;
                 btnSend.BackColor = SystemColors.Control;
                 btnPaymentStart.Enabled = true;
@@ -144,8 +171,8 @@ namespace IngenicoTestTCP
                 btnConfig.BackColor = SystemColors.Control;
                 //writeTotbxLog(message, Color.Green);
                 Text = $"Ingenico TCP Client, version {ver}: {ingenico!.GethostIp()}:{pos_port.ToString()}";
-            }
-            else
+          //  }
+           /* else
             {
                 btnSend.Enabled = false;
                 btnSend.BackColor = SystemColors.ButtonShadow;
@@ -155,7 +182,7 @@ namespace IngenicoTestTCP
                 btnConfig.BackColor = SystemColors.ButtonShadow;
                 // writeTotbxLog(message, Color.Red);
                 Text = $"Ingenico TCP Client, version {ver}: -------:{pos_port.ToString()}";
-            }
+            }*/
         }
 
 
@@ -223,7 +250,7 @@ namespace IngenicoTestTCP
         {
             try
             {
-                btnSend.Enabled = false;
+               // btnSend.Enabled = false;
                 //Command _cmd = cmds.CommandList[Content.ACK];
                 Command _cmd = cmds.CommandList.Values.ElementAt(cmdComboBox.SelectedIndex);
                 await ingenico!.SendAndWaitForResponse(_cmd);
@@ -256,12 +283,12 @@ namespace IngenicoTestTCP
         {
             ingenico!.ASCII = ascii_CheckBox.Checked;
             if (string.IsNullOrEmpty(txtBoxHexDatas.Text))
-            {               
+            {
                 return;
             }
             bool hex = false;
             //int hex = txtBoxHexDatas.Text.IndexOf("30");
-            if ((txtBoxHexDatas.Text[0] == '0') && (txtBoxHexDatas.Text[1] == '2'))
+            if ((txtBoxHexDatas.Text[0] == '0') && (txtBoxHexDatas.Text[1] == '2') && (txtBoxHexDatas.Text[3] == ' '))
             {
                 hex = true;
             }
@@ -269,14 +296,14 @@ namespace IngenicoTestTCP
             { // hex
                 if (ascii_CheckBox.Checked)
                 {
-                    txtBoxHexDatas.Text=Utils.HexToASCIIString(txtBoxHexDatas.Text);                  
+                    txtBoxHexDatas.Text = UtilsPost.HexToASCIIString(txtBoxHexDatas.Text);
                 }
             }
             else
             { // ascii
                 if (!ascii_CheckBox.Checked)
                 {
-                    txtBoxHexDatas.Text = Utils.ASCIIStringToHexString(txtBoxHexDatas.Text);
+                    txtBoxHexDatas.Text =  UtilsPost.ASCIIStringToHexString(txtBoxHexDatas.Text);
                 }
             }
         }
@@ -284,19 +311,21 @@ namespace IngenicoTestTCP
         private void BtnCreateCrc_Click(object sender, EventArgs e)
         {
             //byte[] temp = Utils.StringHexToByteArray("10 0F 3E 42");
+            //if ((txtBoxHexDatas.Text[0] == '0') && (txtBoxHexDatas.Text[1] == '2') && (txtBoxHexDatas.Text[2] == ' '))
+            {
+                byte[] _bhex = UtilsPost.StringHexToByteArray(txtBoxHexDatas.Text);
+                byte _crc = UtilsPost.GetLRC(_bhex);
 
-            byte[] _bhex = Utils.StringHexToByteArray(txtBoxHexDatas.Text);
-            byte _crc = Utils.GetLRC(_bhex);
-
-            byte[] _crcArray = { _crc };
-            string _crcstring = Utils.ByteArray_Hex_ASCII_ToString(_crcArray, 1);
-            txtBoxCRC.Text = _crcstring;
+                byte[] _crcArray = { _crc };
+                string _crcstring = UtilsPost.ByteArray_Hex_ASCII_ToString(_crcArray, 1);
+                txtBoxCRC.Text = _crcstring;
+            }
             return;
         }
 
         private void btnPaymentStart_Click(object sender, EventArgs e)
         {
-            btnPaymentStart.Enabled = false;
+        //    btnPaymentStart.Enabled = false;
             Ingenico.Skeleton!.SetPaymentAmountFt(mTextBoxPayment.Text);
         }
 
@@ -305,21 +334,29 @@ namespace IngenicoTestTCP
             if (string.IsNullOrEmpty(txtBoxCRC.Text))
             {
                 var result = MessageBox.Show("Empty", "Warning",
-                                MessageBoxButtons.OKCancel);               
-                return; 
+                                MessageBoxButtons.OKCancel);
+                return;
             }
-            
+
             try
             {
-                byte[] aa = Utils.StringHexToByteArray(txtBoxHexDatas.Text + " " + txtBoxCRC.Text);
+                byte[] aa = UtilsPost.StringHexToByteArray(txtBoxHexDatas.Text + " " + txtBoxCRC.Text);
                 Command _cmd = new Command(0, aa, "\nAny Raw Cmd:");
                 await ingenico!.SendAndWaitForResponse(_cmd);
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 writeTotbxLog($"ERROR: {ex.Message}", Color.Red);
             }
             return;
+        }
+
+        private void btnConfig_Click(object sender, EventArgs e)
+        {
+            ConfigForm _cal = new ConfigForm(this);
+            {
+                _cal.Show(this);
+            }
         }
     }
 }

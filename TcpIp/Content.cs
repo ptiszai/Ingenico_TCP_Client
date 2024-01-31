@@ -62,7 +62,7 @@ public static byte TRANEND = 0x45; // n
                 “P” (payment), “S” (reversal) and “C” (Close Session)
            “0” (0x30) the PC don’t ask for asynchronous messages; this is the normal situation
          */
-        public static byte ACTIVATEASYNC = 0x30;
+        public static byte ACTIVATEASYNC = 0x31;
         /*
          * Operation type, 13. byte
          Codes for “P” command:

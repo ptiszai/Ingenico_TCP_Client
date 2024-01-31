@@ -25,7 +25,8 @@ namespace IngenicoTestTCP.TcpIp
         public Action<StatusEnum, string>? MesageToMainPage;    
         #endregion
         #region private variables 
-        private ClientThread clientThr;                       
+        private ClientThread clientThr;
+        private ServerTask serverTask;
         private string host_ip;
         private int host_port;
         private string mac;
@@ -56,7 +57,7 @@ namespace IngenicoTestTCP.TcpIp
             // client part
             clientThr = new ClientThread(host_ip_a, host_port_a);
             clientThr.MesageToIngenico += (state, message) =>
-            {
+            {                
                 MesageToMainPage!(state, message);                            
             };         
             // ping part
@@ -82,6 +83,8 @@ namespace IngenicoTestTCP.TcpIp
             };
             pingThread = new Thread(new ThreadStart(pingThreadObject.Procedure));
             pingThread.Start();
+            // server
+            serverTask = new ServerTask(host_ip, host_port);
         }
 
         public void Dispose()
@@ -164,7 +167,7 @@ namespace IngenicoTestTCP.TcpIp
                 }
                 Console.WriteLine($"Pay amount Ft: {_result}");
                 cmds.AmountFt = _result;           
-                Command _cmd = new Command(Content.PAYMENT, cmds.PaymentCmd(cmds.AmountFt), "\nPayment");
+                Command _cmd = new Command(Content.PAYMENT, cmds.PaymentCmd(cmds.AmountFt), "\nPayment", false);
                 if (cmds.CommandList.ContainsKey(Content.PAYMENT))
                 { // check key before removing it
                     cmds.CommandList.Remove(Content.PAYMENT);

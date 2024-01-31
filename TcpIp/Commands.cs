@@ -12,16 +12,18 @@ namespace IngenicoTestTCP.TcpIp
 {
     public class Command
     {
-        public Command(byte id_a, byte[] data_a, string description_a)
+        public Command(byte id_a, byte[] data_a, string description_a, bool async_a = false)
         {
             Id = id_a;
             Data = data_a;
             Description = description_a;
+            Async = async_a;
         }
         public byte Id { get; set; }
         //public string Name { get; set; }
         public string Description { get; set; }
         public byte[] Data { get; set; }
+        public bool Async { get; set; }
     }
 
     public class Commands
@@ -36,7 +38,7 @@ namespace IngenicoTestTCP.TcpIp
         string Host = "192.168.0.1500000000"; // 20 chars
         //https://www.geeksforgeeks.org/c-sharp-dictionary-with-examples/
         public Dictionary<byte, Command> CommandList = new Dictionary<byte, Command>();
-        public byte[] PaymentList = { Content.ACTIVATE, Content.PAYMENT, Content.DEACTIVATE, Content.CLOSE_SESSION };
+        public byte[] PaymentList = { Content.ACTIVATE, Content.PAYMENT/*, Content.CLOSE_SESSION*/ };
        // List<byte[]> paymentList = new List<byte[]>(cont);
         //public List<byte> paymentList = { Content.ACTIVATE };
         public int PaymentListIndex = -1;
@@ -95,7 +97,7 @@ namespace IngenicoTestTCP.TcpIp
             _cmd = new Command(Content.CONFIRM, ConfirmCmd(), "\nTransaction Confirm");
             CommandList.Add(Content.CONFIRM, _cmd);
             // Payment
-            _cmd = new Command(Content.PAYMENT, PaymentCmd(AmountFt), "\nPayment");
+            _cmd = new Command(Content.PAYMENT, PaymentCmd(AmountFt), "Payment", true);
             CommandList.Add(Content.PAYMENT, _cmd);
             // Payment with additional tag
             /*_cmd = new Command(Content.PAYMENTTAG, PaymentTagCmd(AmountFt), "\nPayment with additional tag");
@@ -171,7 +173,7 @@ namespace IngenicoTestTCP.TcpIp
             Buffer.BlockCopy(_a1, 0, _as, 0, _a1.Length);           
             Buffer.BlockCopy(_a2, 0, _as, _a1.Length, _a2.Length);
             Buffer.BlockCopy(_a3, 0, _as, _a1.Length + _a2.Length, _a3.Length);            
-            byte crc = Utils.GetLRC(_as, _as.Length);
+            byte crc = UtilsPost.GetLRC(_as, _as.Length);
             _as[_as.Length-1] = crc;//crc;
             return _as;
         }
@@ -185,7 +187,7 @@ namespace IngenicoTestTCP.TcpIp
             byte[] _as = new byte[_a1.Length + _a2.Length];
             Buffer.BlockCopy(_a1, 0, _as, 0, _a1.Length);
             Buffer.BlockCopy(_a2, 0, _as, _a1.Length, _a2.Length);           
-            byte crc = Utils.GetLRC(_as, _as.Length);
+            byte crc = UtilsPost.GetLRC(_as, _as.Length);
             _as[_as.Length-1] = crc;            
             return _as;
         }
@@ -197,7 +199,7 @@ namespace IngenicoTestTCP.TcpIp
             byte[] _as = new byte[_a1.Length + _a2.Length];
             Buffer.BlockCopy(_a1, 0, _as, 0, _a1.Length);
             Buffer.BlockCopy(_a2, 0, _as, _a1.Length, _a2.Length);            
-            byte crc = Utils.GetLRC(_as, _as.Length);
+            byte crc = UtilsPost.GetLRC(_as, _as.Length);
             _as[_as.Length - 1] = crc;
             return _as;
         }
@@ -209,7 +211,7 @@ namespace IngenicoTestTCP.TcpIp
             byte[] _as = new byte[_a1.Length + _a2.Length];
             Buffer.BlockCopy(_a1, 0, _as, 0, _a1.Length);
             Buffer.BlockCopy(_a2, 0, _as, _a1.Length, _a2.Length);
-            byte crc = Utils.GetLRC(_as, _as.Length);
+            byte crc = UtilsPost.GetLRC(_as, _as.Length);
             _as[_as.Length - 1] = crc;
             return _as;
         }
@@ -221,7 +223,7 @@ namespace IngenicoTestTCP.TcpIp
             byte[] _as = new byte[_a1.Length + _a2.Length];
             Buffer.BlockCopy(_a1, 0, _as, 0, _a1.Length);
             Buffer.BlockCopy(_a2, 0, _as, _a1.Length, _a2.Length);            
-            byte crc = Utils.GetLRC(_as, _as.Length);
+            byte crc = UtilsPost.GetLRC(_as, _as.Length);
             _as[_as.Length - 1] = crc;
             return _as;
         }
@@ -233,7 +235,7 @@ namespace IngenicoTestTCP.TcpIp
             byte[] _as = new byte[_a1.Length + _a2.Length];
             Buffer.BlockCopy(_a1, 0, _as, 0, _a1.Length);
             Buffer.BlockCopy(_a2, 0, _as, _a1.Length, _a2.Length);            
-            byte crc = Utils.GetLRC(_as, _as.Length);
+            byte crc = UtilsPost.GetLRC(_as, _as.Length);
             _as[_as.Length - 1] = crc;
             return _as;
         }
@@ -245,7 +247,7 @@ namespace IngenicoTestTCP.TcpIp
             byte[] _as = new byte[_a1.Length + _a2.Length];
             Buffer.BlockCopy(_a1, 0, _as, 0, _a1.Length);
             Buffer.BlockCopy(_a2, 0, _as, _a1.Length, _a2.Length);
-            byte crc = Utils.GetLRC(_as, _as.Length);
+            byte crc = UtilsPost.GetLRC(_as, _as.Length);
             _as[_as.Length - 1] = crc;
             return _as;
         }
@@ -257,7 +259,7 @@ namespace IngenicoTestTCP.TcpIp
             byte[] _as = new byte[_a1.Length + _a2.Length];
             Buffer.BlockCopy(_a1, 0, _as, 0, _a1.Length);
             Buffer.BlockCopy(_a2, 0, _as, _a1.Length, _a2.Length);
-            byte crc = Utils.GetLRC(_as, _as.Length);
+            byte crc = UtilsPost.GetLRC(_as, _as.Length);
             _as[_as.Length - 1] = crc;
             return _as;
         }
@@ -269,7 +271,7 @@ namespace IngenicoTestTCP.TcpIp
             byte[] _as = new byte[_a1.Length + _a2.Length];
             Buffer.BlockCopy(_a1, 0, _as, 0, _a1.Length);
             Buffer.BlockCopy(_a2, 0, _as, _a1.Length, _a2.Length);
-            byte crc = Utils.GetLRC(_as, _as.Length);
+            byte crc = UtilsPost.GetLRC(_as, _as.Length);
             _as[_as.Length - 1] = crc;
             return _as;
         }
@@ -294,7 +296,7 @@ namespace IngenicoTestTCP.TcpIp
             Buffer.BlockCopy(_a6, 0, _as, _a1.Length+_a2.Length+_a3.Length+_a4.Length+_a5.Length, _a6.Length);
             Buffer.BlockCopy(_a7, 0, _as, _a1.Length+_a2.Length+_a3.Length+_a4.Length+_a5.Length+_a6.Length, _a7.Length);
             Buffer.BlockCopy(_a8, 0, _as, _a1.Length+_a2.Length+_a3.Length+_a4.Length+_a5.Length+_a6.Length+_a7.Length, _a8.Length);
-            byte crc = Utils.GetLRC(_as, _as.Length);
+            byte crc = UtilsPost.GetLRC(_as, _as.Length);
             _as[_as.Length - 1] = crc;
             return _as;
         }
@@ -314,7 +316,7 @@ namespace IngenicoTestTCP.TcpIp
             Buffer.BlockCopy(_a1, 0, _as, 0, _a1.Length);
             Buffer.BlockCopy(_a2, 0, _as, _a1.Length, _a2.Length);
             Buffer.BlockCopy(_a3, 0, _as, _a1.Length + _a2.Length, _a3.Length);
-            byte crc = Utils.GetLRC(_as, _as.Length);
+            byte crc = UtilsPost.GetLRC(_as, _as.Length);
             _as[_as.Length - 1] = crc;
             return _as;
         }
@@ -332,7 +334,7 @@ namespace IngenicoTestTCP.TcpIp
             Buffer.BlockCopy(_a3, 0, _as, _a1.Length + _a2.Length, _a3.Length);
             Buffer.BlockCopy(_a4, 0, _as, _a1.Length + _a2.Length + _a3.Length, _a4.Length);
             Buffer.BlockCopy(_a5, 0, _as, _a1.Length + _a2.Length + _a3.Length + _a4.Length, _a5.Length);
-            byte crc = Utils.GetLRC(_as, _as.Length);
+            byte crc = UtilsPost.GetLRC(_as, _as.Length);
             _as[_as.Length - 1] = crc;
             return _as;
         }        
@@ -373,7 +375,7 @@ namespace IngenicoTestTCP.TcpIp
             Buffer.BlockCopy(_a4, 0, _as, _a1.Length + _a2.Length + _a3.Length, _a4.Length);
             Buffer.BlockCopy(_a5, 0, _as, _a1.Length + _a2.Length + _a3.Length + _a4.Length, _a5.Length);
             Buffer.BlockCopy(_a6, 0, _as, _a1.Length + _a2.Length + _a3.Length + _a4.Length + _a5.Length, _a6.Length);
-            byte crc = Utils.GetLRC(_as, _as.Length);
+            byte crc = UtilsPost.GetLRC(_as, _as.Length);
             _as[_as.Length - 1] = crc;
             return _as;
         }
@@ -394,7 +396,7 @@ namespace IngenicoTestTCP.TcpIp
             Buffer.BlockCopy(_a5, 0, _as, _a1.Length + _a2.Length + _a3.Length + _a4.Length, _a5.Length);
             Buffer.BlockCopy(_a6, 0, _as, _a1.Length + _a2.Length + _a3.Length + _a4.Length + _a5.Length, _a6.Length);
             Buffer.BlockCopy(_a7, 0, _as, _a1.Length + _a2.Length + _a3.Length + _a4.Length + _a5.Length +_a6.Length, _a7.Length);
-            byte crc = Utils.GetLRC(_as, _as.Length);
+            byte crc = UtilsPost.GetLRC(_as, _as.Length);
             _as[_as.Length - 1] = crc;
             return _as;
         }
@@ -422,7 +424,7 @@ namespace IngenicoTestTCP.TcpIp
             Buffer.BlockCopy(_a8, 0, _as, _a1.Length + _a2.Length + _a3.Length + _a4.Length + _a5.Length + _a6.Length + _a7.Length, _a8.Length);
             Buffer.BlockCopy(_a9, 0, _as, _a1.Length + _a2.Length + _a3.Length + _a4.Length + _a5.Length + _a6.Length + _a7.Length + _a8.Length, _a9.Length);
             Buffer.BlockCopy(_a10, 0, _as, _a1.Length + _a2.Length + _a3.Length + _a4.Length + _a5.Length + _a6.Length + _a7.Length + _a8.Length + _a9.Length, _a10.Length);
-            byte crc = Utils.GetLRC(_as, _as.Length);
+            byte crc = UtilsPost.GetLRC(_as, _as.Length);
             _as[_as.Length - 1] = crc;
             return _as;
         }
@@ -445,7 +447,7 @@ namespace IngenicoTestTCP.TcpIp
             Buffer.BlockCopy(_a5, 0, _as, _a1.Length + _a2.Length + _a3.Length + _a4.Length, _a5.Length);
             Buffer.BlockCopy(_a6, 0, _as, _a1.Length + _a2.Length + _a3.Length + _a4.Length + _a5.Length, _a6.Length);
             Buffer.BlockCopy(_a7, 0, _as, _a1.Length + _a2.Length + _a3.Length + _a4.Length + _a5.Length + _a6.Length, _a7.Length);
-            byte crc = Utils.GetLRC(_as, _as.Length);
+            byte crc = UtilsPost.GetLRC(_as, _as.Length);
             _as[_as.Length - 1] = crc;
             return _as;
         }
@@ -458,7 +460,7 @@ namespace IngenicoTestTCP.TcpIp
             Buffer.BlockCopy(_a1, 0, _as, 0, _a1.Length);
             Buffer.BlockCopy(_a2, 0, _as, _a1.Length, _a2.Length);
             Buffer.BlockCopy(_a3, 0, _as, _a1.Length + _a2.Length, _a3.Length);
-            byte crc = Utils.GetLRC(_as, _as.Length);
+            byte crc = UtilsPost.GetLRC(_as, _as.Length);
             _as[_as.Length - 1] = crc;
             return _as;
         }
