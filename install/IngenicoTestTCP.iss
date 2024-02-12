@@ -9,7 +9,7 @@
 
 #define AppName "IngenicoTCP"
 #define AppExeName "IngenicoTestTCP.exe"
-#define AppVersion "1.0.2.0"
+#define AppVersion "1.0.2.2"
 #define AppNameVersion "Ingenico TCP program " + AppVersion 
 #define ConfigDir "c:\Users\Public\IngenicoTestTCP\"
 

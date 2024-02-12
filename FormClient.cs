@@ -1,23 +1,9 @@
-using System.IO;
-using System.Net.Sockets;
-using System.Text;
-using System.Windows.Forms;
-using System.Xml.Linq;
-using static System.Net.Mime.MediaTypeNames;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using IngenicoTestTCP.TcpIp;
 using Font = System.Drawing.Font;
-using System.Drawing;
-using System.Net.NetworkInformation;
-using System.Net;
 using IniParser.Model;
 using IniParser;
 using System.Reflection;
-using System.Collections.Generic;
-using System.Threading;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.ToolBar;
+
 
 //// Debug.WriteLine(BitConverter.ToString(System.Text.Encoding.Default.GetBytes(message)));  // Write HEX to the debug
 namespace IngenicoTestTCP
@@ -203,7 +189,7 @@ namespace IngenicoTestTCP
         private void Form1_Load(object sender, EventArgs e)
         {
             // Version? _ver = Assembly.GetExecutingAssembly().GetName().Version;
-            Text = $"Adomány Táble Client, version {ver}: {pos_ip}:{pos_port.ToString()}";
+            Text = $"Ingenico Self/2000 Client, version {ver}: {pos_ip}:{pos_port.ToString()}";
             foreach (KeyValuePair<byte, Command> cmdd in cmds.CommandList)
             {
                 cmdComboBox.Items.Add(cmdd.Value.Description);

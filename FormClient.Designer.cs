@@ -172,6 +172,7 @@
             btnConfig.TabIndex = 16;
             btnConfig.Text = "Configs";
             btnConfig.UseVisualStyleBackColor = false;
+            btnConfig.Visible = false;
             btnConfig.Click += btnConfig_Click;
             // 
             // label4
