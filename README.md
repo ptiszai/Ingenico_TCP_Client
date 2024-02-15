@@ -9,3 +9,9 @@ Ingenico Guide: "./doc/GUIDE_SELF_2000_4000_5000.pdf"<br>
 External interface protocol for iSelf EFT/POS terminals : "./doc/InterfaceProtocol_iSelf-v3.27.pdf"
 
 ## Enviroment<br>
+- Windows 10 64-bit<br>
+- Microsoft Visual Studio Community 2022<br>
+- 
+### Enviroment VS2022:<br>
+- target framework: .NET7.0<br>
+
